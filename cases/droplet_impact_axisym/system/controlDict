@@ -1,0 +1,72 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  droplet_impact_axisym  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     interFoam;
+
+startFrom       latestTime;
+startTime       0;
+stopAt          endTime;
+endTime         0.01;           // 10 ms  (~5 D0/U0 at 1 m/s)
+
+deltaT          1e-6;
+adjustTimeStep  yes;
+maxCo           0.2;
+maxAlphaCo      0.2;
+maxDeltaT       5e-6;           // below capillary limit sqrt(rho dx^3/(2 pi sigma)) ~ 8e-6 s at N=25
+
+writeControl    adjustable;
+writeInterval   2e-4;           // 50 field snapshots for ParaView
+purgeWrite      0;
+writeFormat     binary;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   6;
+runTimeModifiable yes;
+
+functions
+{
+    // alpha = 0.5 isosurface every 20 us -> spreading diameter beta(t)
+    interface
+    {
+        type            surfaces;
+        libs            (sampling);
+        writeControl    adjustableRunTime;
+        writeInterval   2e-5;
+        surfaceFormat   raw;
+        fields          (alpha.water);
+        interpolationScheme cellPoint;
+        surfaces
+        {
+            isoAlpha
+            {
+                type        isoSurface;
+                isoField    alpha.water;
+                isoValue    0.5;
+                interpolate true;
+            }
+        }
+    }
+
+    // liquid volume in the wedge -> mass-conservation check
+    liquidVolume
+    {
+        type            volFieldValue;
+        libs            (fieldFunctionObjects);
+        fields          (alpha.water);
+        operation       volIntegrate;
+        regionType      all;
+        writeFields     false;
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+}

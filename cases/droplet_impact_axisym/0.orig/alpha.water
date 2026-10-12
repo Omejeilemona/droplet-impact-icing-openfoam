@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  droplet_impact_axisym  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha.water;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/caseParameters"
+
+dimensions      [0 0 0 0 0 0 0];
+internalField   uniform 0;
+
+boundaryField
+{
+    wall
+    {
+        type            constantAlphaContactAngle;
+        theta0          $theta;
+        limit           gradient;
+        value           uniform 0;
+    }
+    atmosphere
+    {
+        type            inletOutlet;
+        inletValue      uniform 0;
+        value           uniform 0;
+    }
+    front
+    {
+        type            wedge;
+    }
+    back
+    {
+        type            wedge;
+    }
+    axis
+    {
+        type            empty;
+    }
+}

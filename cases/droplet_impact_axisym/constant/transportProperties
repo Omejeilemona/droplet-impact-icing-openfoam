@@ -1,0 +1,31 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  droplet_impact_axisym  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/caseParameters"
+
+phases          (water air);
+
+water
+{
+    transportModel  Newtonian;
+    nu              $nuL;
+    rho             $rhoL;
+}
+
+air
+{
+    transportModel  Newtonian;
+    nu              $nuG;
+    rho             $rhoG;
+}
+
+sigma           $sigma;

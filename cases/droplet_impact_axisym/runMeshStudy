@@ -1,0 +1,20 @@
+#!/bin/bash
+# Mesh-convergence study: copies this case into ../meshStudy/N<cells per radius>,
+# keeps cells square (nr = 6N, nz = 8N), runs each, then overlays beta(t).
+#   usage:  ./runMeshStudy            (N = 25 35 50)
+#           ./runMeshStudy 25 50 70
+#           NP=6 ./runMeshStudy       (cores per run)
+cd "${0%/*}" || exit
+Ns=${@:-25 35 50}
+mkdir -p ../meshStudy
+cases=()
+for N in $Ns; do
+    c=../meshStudy/N$N
+    rm -rf "$c"; mkdir -p "$c"
+    cp -r 0.orig constant system postProcess caseParameters Allrun Allclean "$c"/
+    sed -i "s/^nr .*/nr          $((6*N));/; s/^nz .*/nz          $((8*N));/" "$c/caseParameters"
+    echo "=== N = $N  ($((6*N)) x $((8*N)) cells) ==="
+    (cd "$c" && ./Allrun)
+    cases+=("$c")
+done
+python3 postProcess/spreading.py "${cases[@]}" --overlay ../meshStudy/beta_t_mesh.png --label nr

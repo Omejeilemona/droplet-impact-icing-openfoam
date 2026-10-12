@@ -1,0 +1,21 @@
+#!/bin/bash
+# Weber-number sweep: copies this case into ../sweep/U<speed>, sets the impact
+# speed, runs it, then plots beta_max vs We against the correlations.
+#   usage:  ./runSweep            (default speeds)
+#           ./runSweep 0.5 1 2    (custom speeds, m/s)
+cd "${0%/*}" || exit
+base=$(pwd)
+speeds=${@:-0.5 1.0 1.5 2.0 2.5}
+mkdir -p ../sweep
+cases=()
+for u in $speeds; do
+    c=../sweep/U$u
+    rm -rf "$c"
+    mkdir -p "$c"
+    cp -r 0.orig constant system postProcess caseParameters Allrun Allclean "$c"/
+    sed -i "s/^Uimpact .*/Uimpact     -$u;/" "$c/caseParameters"
+    echo "=== U0 = $u m/s ==="
+    (cd "$c" && ./Allrun)
+    cases+=("$c")
+done
+python3 postProcess/spreading.py "${cases[@]}" --summary ../sweep/betamax_We.png

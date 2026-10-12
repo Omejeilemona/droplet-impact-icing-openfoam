@@ -1,0 +1,33 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  droplet_impact_axisym  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      setFieldsDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/caseParameters"
+
+defaultFieldValues
+(
+    volScalarFieldValue alpha.water 0
+    volVectorFieldValue U (0 0 0)
+);
+
+regions
+(
+    sphereToCell
+    {
+        origin  (0 $yc 0);
+        radius  $R;
+        fieldValues
+        (
+            volScalarFieldValue alpha.water 1
+            volVectorFieldValue U (0 $Uimpact 0)
+        );
+    }
+);

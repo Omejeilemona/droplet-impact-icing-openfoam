@@ -1,0 +1,4 @@
+mesh,cells_per_radius,dx_um,nr,nz,beta_max,t_star_at_max,pasandideh_fard_rel_diff_pct
+N25,25,40,150,200,2.661,1.70,-1.2
+N35,35,29,210,280,2.640,1.63,-2.0
+N50,50,20,300,400,2.608,1.57,-3.2

@@ -1,0 +1,22 @@
+# OpenFOAM generated output (keep 0.orig, constant/*Properties, system/)
+cases/**/[1-9]*/
+cases/**/0/
+cases/**/0.[0-9]*/
+cases/**/processor*/
+cases/**/constant/polyMesh/
+cases/**/postProcessing/
+cases/**/log.*
+cases/**/*.foam
+cases/**/beta_t.csv
+cases/**/beta_t.png
+
+# sweeps and studies are run outside the repo (../meshStudy, ../sweep)
+meshStudy/
+sweep/
+
+# misc
+*.tar.gz
+__pycache__/
+*.pyc
+.vscode/
+CLAUDE.md

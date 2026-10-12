@@ -1,0 +1,28 @@
+// ---- Single source of truth for the case. Edit here only. ----
+// SI units.
+
+// Droplet
+R           1e-3;       // droplet radius [m]  (D0 = 2 mm)
+yc          1.1e-3;     // initial centre height [m] (gap = yc - R = 0.1 mm)
+Uimpact     -1.0;       // impact velocity [m/s], negative = downward
+
+// Run length, in units of D0/U0 after contact.
+// 3 covers spreading and beta_max (validation runs); 5+ includes recoil and the axial jet.
+tStarEnd    3;
+
+// Wall wettability
+theta       90;         // static contact angle [deg]
+
+// Fluids (water / air, 20 C)
+rhoL        1000;
+nuL         1e-06;
+rhoG        1.2;
+nuG         1.5e-05;
+sigma       0.072;
+
+// Domain and mesh. N = cells per radius (keep cells square: dx = R/N).
+// Domain 6R (radial) x Hmm (vertical). With Hmm = 8 (= 8R):
+// nr = 6N, nz = 8N.   N=25 -> (150 200),  N=50 -> (300 400),  N=100 -> (600 800)
+Hmm         8;          // domain height [mm]  (tall enough for the recoil jet)
+nr          150;
+nz          200;

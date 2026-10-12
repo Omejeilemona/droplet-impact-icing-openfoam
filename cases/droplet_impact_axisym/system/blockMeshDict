@@ -1,0 +1,66 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  droplet_impact_axisym  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/caseParameters"
+
+// 2D axisymmetric wedge (5 deg) about the y-axis.
+// x = radial direction, y = vertical (impact) direction.
+// Domain: r in [0, 6 mm], y in [0, Hmm].  Lengths below in mm.
+scale   0.001;
+
+vertices
+(
+    (0          0  0)            // 0  axis, wall
+    (5.99428932 0 -0.26171634)   // 1  back,  wall
+    (5.99428932 $Hmm -0.26171634)   // 2  back,  top
+    (0          $Hmm  0)            // 3  axis, top
+    (5.99428932 0  0.26171634)   // 4  front, wall
+    (5.99428932 $Hmm  0.26171634)   // 5  front, top
+);
+
+blocks
+(
+    hex (0 1 2 3 0 4 5 3) ($nr $nz 1) simpleGrading (1 1 1)
+);
+
+boundary
+(
+    wall
+    {
+        type wall;
+        faces ((0 1 4 0));
+    }
+    atmosphere
+    {
+        type patch;
+        faces
+        (
+            (3 5 2 3)   // top
+            (1 2 5 4)   // outer radius
+        );
+    }
+    front
+    {
+        type wedge;
+        faces ((0 4 5 3));
+    }
+    back
+    {
+        type wedge;
+        faces ((0 3 2 1));
+    }
+    axis
+    {
+        type empty;
+        faces ((0 3 3 0));
+    }
+);
