@@ -43,6 +43,8 @@ For comparison, the correlations of Clanet et al. (2004) and Roisman (2009) give
 - Liquid volume is conserved to better than 0.001 % through maximum spread.
 - During recoil at θ = 90°, the collapsing cavity drives a thin axial jet rising at about 4 m/s (4 U₀). Its radius is close to the cell size, so its speed is not resolved, and volume loss starts when it forms (−0.085 % by 10 ms). Validation runs therefore stop at t* = 3.
 - β_max is independent of domain height (identical in 4 mm and 8 mm domains).
+- The animation shows a small air bubble trapped on the axis at the wall from the moment of impact, consistent with the air cushion being enclosed under the droplet (Thoroddsen et al. 2005). At N25 it spans only a few cells, so its size is not resolved.
+- The axial jet breaks into satellite droplets (three by t ≈ 9 ms). The jet and these droplets are a few cells across, which is where the late volume loss occurs.
 
 The full impact, including recoil, from an earlier exploratory run to t* = 5 (N25, 4 mm tall domain, otherwise identical):
 
@@ -94,6 +96,7 @@ results/                       tabulated results
 - Brackbill, J. U., Kothe, D. B. & Zemach, C. A continuum method for modeling surface tension. *Journal of Computational Physics* 100, 335–354 (1992).
 - Afkhami, S., Zaleski, S. & Bussmann, M. A mesh-dependent model for applying dynamic contact angles to VOF simulations. *Journal of Computational Physics* 228, 5370–5389 (2009).
 - Bartolo, D., Josserand, C. & Bonn, D. Singular jets and bubbles in drop impact. *Physical Review Letters* 96, 124501 (2006).
+- Thoroddsen, S. T., Etoh, T. G., Takehara, K., Ootsuka, N. & Hatsuki, Y. The air bubble entrapped under a drop impacting on a solid surface. *Journal of Fluid Mechanics* 545, 203–212 (2005).
 
 ## Author
 
