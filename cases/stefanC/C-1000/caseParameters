@@ -1,0 +1,24 @@
+// ---- 1D one-phase Stefan problem: water at Tm frozen from a cold wall ----
+// SI units. Edit here only.
+
+Tm          273.15;     // melting temperature [K]
+Twall       263.15;     // cold-wall temperature [K]  (-10 C)
+
+// Lee phase-change model, (liquid to solid). C < 0 activates below Tm.
+// |C| sets how far below Tm the front must be to freeze at the required rate.
+Cfreeze     -1000;
+
+// Water (liquid) and ice (solid). Equal densities so that freezing causes
+// no volume change and no flow: the classical Stefan solution assumes this.
+rhoL        1000;
+CpL         4180;
+muL         1e-3;
+PrL         6.97;       // mu Cp / k  with k = 0.6 W/m/K
+Lf          3.34e5;     // latent heat [J/kg], entered as Hf of the liquid
+
+rhoS        1000;       // real ice: 917
+CpS         2050;
+kS          2.22;
+
+// Mesh: column of height Lmm, nCells cells
+nCells      200;

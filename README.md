@@ -15,7 +15,9 @@ Simulations of water droplets impacting surfaces of controlled wettability, buil
 | 1c | Weber-number sweep (We ≈ 7–170) | Next |
 | 2 | Wettability sweep (θ = 30°–160°), deposition and rebound | Planned |
 | 3 | Dynamic contact-angle boundary condition from molecular-kinetic theory (C++ library) | Planned |
-| 4 | Heat transfer and solidification: enthalpy-porosity freezing, verified against the Stefan problem | Planned |
+| 4a | Freezing verification: 1D Stefan problem with `icoReactingMultiphaseInterFoam` | Done |
+| 4b | Sessile droplet freezing on a cold plate (water, ice, air; ice expansion) | In progress |
+| 4c | Droplet impact on a cold plate | Planned |
 | 5 | 3D impact with adaptive mesh refinement, parallel scaling | Planned |
 
 ## Phase 1 results
@@ -52,6 +54,22 @@ The full impact, including recoil, from an earlier exploratory run to t* = 5 (N2
 
 Data: [`results/mesh_study.csv`](results/mesh_study.csv)
 
+## Freezing verification (Phase 4a)
+
+Water at 0 °C in a 10 mm column is frozen from a wall held at −10 °C (`cases/stefan_freezing_1d`). The solver is `icoReactingMultiphaseInterFoam` with water and ice as phases, the Lee phase-change model (liquid to solid, active below 0 °C) and Voller-Prakash damping in the ice. Ice and water densities are set equal so that freezing causes no flow, as the analytical solution assumes. The exact front position is s(t) = 2λ√(α_ice t), with λ e^{λ²} erf(λ) = St/√π; here St = 0.061 and s = 0.361 mm √(t/s).
+
+| Lee coefficient C (1/s) | s at 100 s (mm) | Exact (mm) | Error |
+|---|---|---|---|
+| −100 | 3.502 | 3.610 | −2.97 % |
+| −1000 | 3.575 | 3.610 | −0.97 % |
+| −10000 | 3.594 | 3.610 | −0.43 % |
+
+![Stefan problem: front position and error](figures/stefan_C.png)
+
+The Lee model freezes water at a rate proportional to its undercooling, so the front runs slightly behind the exact solution. The lag is fixed early (the curves are parallel in √t), so the relative error decays over time. It falls with |C|, but by less than a factor of 10 per decade, which suggests a second error source (the 50 µm cells, 1.4 % of the final thickness) dominates at C = −10000. C = −1000 is used for the droplet cases as a compromise between accuracy and time step.
+
+Data: [`results/stefan_C.csv`](results/stefan_C.csv)
+
 ## Model
 
 | Item | Choice |
@@ -82,6 +100,7 @@ All physical, mesh and run-length inputs are in `caseParameters`. `Allrun` sets 
 
 ```
 cases/droplet_impact_axisym/   OpenFOAM case (0.orig, constant, system), run scripts
+cases/stefan_freezing_1d/      freezing verification against the Stefan problem
 cases/.../postProcess/         spreading.py: beta(t), correlations, sweep and mesh plots
                                animate.py: GIF of the interface
 figures/                       figures used in this README
@@ -95,6 +114,8 @@ results/                       tabulated results
 - Roisman, I. V. Inertia dominated drop collisions. II. An analytical solution of the Navier–Stokes equations for a spreading viscous film. *Physics of Fluids* 21, 052104 (2009).
 - Brackbill, J. U., Kothe, D. B. & Zemach, C. A continuum method for modeling surface tension. *Journal of Computational Physics* 100, 335–354 (1992).
 - Afkhami, S., Zaleski, S. & Bussmann, M. A mesh-dependent model for applying dynamic contact angles to VOF simulations. *Journal of Computational Physics* 228, 5370–5389 (2009).
+- Voller, V. R. & Prakash, C. A fixed grid numerical modelling methodology for convection-diffusion mushy region phase-change problems. *International Journal of Heat and Mass Transfer* 30, 1709–1719 (1987).
+- Lee, W. H. A pressure iteration scheme for two-phase flow modeling. Los Alamos Scientific Laboratory report LA-UR-79-975 (1979).
 - Bartolo, D., Josserand, C. & Bonn, D. Singular jets and bubbles in drop impact. *Physical Review Letters* 96, 124501 (2006).
 - Thoroddsen, S. T., Etoh, T. G., Takehara, K., Ootsuka, N. & Hatsuki, Y. The air bubble entrapped under a drop impacting on a solid surface. *Journal of Fluid Mechanics* 545, 203–212 (2005).
 

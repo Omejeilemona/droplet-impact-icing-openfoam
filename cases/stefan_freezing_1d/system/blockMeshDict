@@ -1,0 +1,58 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  stefan_freezing_1d  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/caseParameters"
+
+// 1D column along y; 10 mm long, 0.1 mm x 0.1 mm cross-section (empty sides).
+scale   0.001;
+
+vertices
+(
+    (0   0  0)
+    (0.1 0  0)
+    (0.1 10 0)
+    (0   10 0)
+    (0   0  0.1)
+    (0.1 0  0.1)
+    (0.1 10 0.1)
+    (0   10 0.1)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (1 $nCells 1) simpleGrading (1 1 1)
+);
+
+boundary
+(
+    coldWall
+    {
+        type wall;
+        faces ((0 1 5 4));
+    }
+    top
+    {
+        type patch;
+        faces ((3 7 6 2));
+    }
+    sides
+    {
+        type empty;
+        faces
+        (
+            (0 4 7 3)
+            (1 2 6 5)
+            (0 3 2 1)
+            (4 5 6 7)
+        );
+    }
+);

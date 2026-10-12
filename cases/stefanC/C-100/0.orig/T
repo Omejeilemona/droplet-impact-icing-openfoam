@@ -1,0 +1,35 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  stefan_freezing_1d  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/caseParameters"
+
+dimensions      [0 0 0 1 0 0 0];
+internalField   uniform $Tm;
+
+boundaryField
+{
+    coldWall
+    {
+        type            fixedValue;
+        value           uniform $Twall;
+    }
+    top
+    {
+        type            inletOutlet;
+        inletValue      uniform $Tm;
+        value           uniform $Tm;
+    }
+    sides
+    {
+        type            empty;
+    }
+}

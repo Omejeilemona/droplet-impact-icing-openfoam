@@ -1,0 +1,14 @@
+#!/bin/bash
+# Chains the unattended studies; each writes its own log next to this case.
+#   A  slip-length mesh study   (N = 25 35 50, slip = 20 um)   ~2.5 h
+#   B  Weber-number sweep       (U0 = 0.5 ... 2.5 m/s, N25)     ~1 h
+#   C  wettability sweep        (theta = 30 ... 150 deg, N25)   ~1 h
+# usage:  nohup ./runOvernight > ../overnight.log 2>&1 &
+cd "${0%/*}" || exit
+date; echo "### A: slip-length mesh study"
+SLIP=20e-6 OUT=../meshStudy_slip20um ./runMeshStudy 25 35 50 > ../meshStudy_slip20um.log 2>&1
+date; echo "### B: Weber sweep"
+./runSweep > ../sweep.log 2>&1
+date; echo "### C: wettability sweep"
+./runThetaSweep > ../thetaSweep.log 2>&1
+date; echo "### done"

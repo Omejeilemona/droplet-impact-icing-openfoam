@@ -20,3 +20,6 @@ __pycache__/
 *.pyc
 .vscode/
 CLAUDE.md
+thetaSweep/
+meshStudy_*/
+*.log

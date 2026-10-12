@@ -10,6 +10,9 @@ NP=1 ./Allrun     # serial
 ./Allclean        # reset
 ./runMeshStudy    # N = 25, 35, 50 cells per radius -> ../meshStudy/beta_t_mesh.png
 ./runSweep        # We sweep: U0 = 0.5 ... 2.5 m/s -> ../sweep/betamax_We.png
+./runThetaSweep   # contact angle 30 ... 150 deg -> ../thetaSweep/beta_t_theta.png
+SLIP=20e-6 OUT=../meshStudy_slip20um ./runMeshStudy   # mesh study with Navier slip
+nohup ./runOvernight > ../overnight.log 2>&1 &         # all three studies, unattended
 ```
 
 `Allrun` sets `endTime` (from `tStarEnd`) and `maxDeltaT` (0.6 × capillary time-step limit for the current mesh) automatically.

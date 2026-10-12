@@ -1,0 +1,20 @@
+#!/bin/bash
+# Wettability sweep: copies this case into ../thetaSweep/theta<deg>, sets the
+# static contact angle, runs each, then overlays beta(t).
+#   usage:  ./runThetaSweep               (30 60 90 120 150 deg)
+#           ./runThetaSweep 45 135
+cd "${0%/*}" || exit
+angles=${@:-30 60 90 120 150}
+OUT=${OUT:-../thetaSweep}
+mkdir -p "$OUT"
+cases=()
+for th in $angles; do
+    c=$OUT/theta$th
+    rm -rf "$c"; mkdir -p "$c"
+    cp -r 0.orig constant system postProcess caseParameters Allrun Allclean "$c"/
+    sed -i "s/^theta .*/theta       $th;/" "$c/caseParameters"
+    echo "=== theta = $th deg ==="
+    (cd "$c" && ./Allrun)
+    cases+=("$c")
+done
+python3 postProcess/spreading.py "${cases[@]}" --overlay "$OUT/beta_t_theta.png" --label theta

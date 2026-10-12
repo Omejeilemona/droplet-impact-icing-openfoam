@@ -11,7 +11,7 @@ NP=${NP:-4}
 # endTime   = contact time + tStarEnd * D0/U0
 # maxDeltaT = 0.6 * capillary limit sqrt(rho_avg dx^3 / (2 pi sigma)), dx = R/N
 eval $(awk '!/^[ \t]*\/\// && NF>=2 {gsub(";","",$2); print $1"="$2}' caseParameters \
-       | grep -E '^(R|yc|Uimpact|tStarEnd|rhoL|rhoG|sigma|nr)=')
+       | grep -E '^(R|yc|Uimpact|tStarEnd|rhoL|rhoG|sigma|nr|nz|Hmm|slipLength)=')
 endTime=$(awk -v R=$R -v yc=$yc -v U=$Uimpact -v ts=$tStarEnd \
     'BEGIN{U=(U<0)?-U:U; printf "%.6g", (yc-R)/U + ts*2*R/U}')
 maxDt=$(awk -v R=$R -v nr=$nr -v rl=$rhoL -v rg=$rhoG -v s=$sigma \
@@ -21,6 +21,19 @@ sed -i "s/^maxDeltaT .*/maxDeltaT       $maxDt;/"   system/controlDict
 echo "endTime = $endTime s,  maxDeltaT = $maxDt s,  NP = $NP"
 
 restore0Dir
+
+# Navier slip on the wall: u_wall = slipLength * du/dn, discretised over the
+# wall cell (centre at dy/2) -> partialSlip with valueFraction = (dy/2)/(slip + dy/2)
+if awk -v l="${slipLength:-0}" 'BEGIN{exit !(l>0)}'
+then
+    frac=$(awk -v l=$slipLength -v H=$Hmm -v nz=$nz \
+        'BEGIN{h=0.5*H*1e-3/nz; printf "%.6g", h/(l+h)}')
+    sed -i "s/type            noSlip;/type            partialSlip;\n        valueFraction   uniform $frac;\n        value           uniform (0 0 0);/" 0/U
+    echo "wall: Navier slip, slipLength = $slipLength m, valueFraction = $frac"
+else
+    echo "wall: no-slip"
+fi
+
 runApplication blockMesh
 runApplication checkMesh
 runApplication setFields

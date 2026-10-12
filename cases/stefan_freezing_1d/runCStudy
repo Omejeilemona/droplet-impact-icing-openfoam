@@ -1,0 +1,20 @@
+#!/bin/bash
+# Sensitivity to the Lee coefficient: copies this case into ../stefanC/C<value>,
+# runs each (serial, a few minutes), then compares all with the analytical solution.
+#   usage:  ./runCStudy                 (C = -100 -1000 -10000)
+#           ./runCStudy -1000 -3000
+cd "${0%/*}" || exit
+Cs=${@:--100 -1000 -10000}
+OUT=../stefanC
+mkdir -p "$OUT"
+cases=()
+for C in $Cs; do
+    c=$OUT/C$C
+    rm -rf "$c"; mkdir -p "$c"
+    cp -r 0.orig constant system postProcess caseParameters Allrun Allclean "$c"/
+    sed -i "s/^Cfreeze .*/Cfreeze     $C;/" "$c/caseParameters"
+    echo "=== Cfreeze = $C ==="
+    (cd "$c" && ./Allrun > /dev/null 2>&1; tail -2 log.icoReactingMultiphaseInterFoam)
+    cases+=("$c")
+done
+python3 postProcess/stefan.py "${cases[@]}" --out "$OUT/stefan_C.png"
