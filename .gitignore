@@ -23,3 +23,7 @@ CLAUDE.md
 thetaSweep/
 meshStudy_*/
 *.log
+stefanC/
+cases/**/stefan.png
+cases/**/log.stefan
+freezeStudy/

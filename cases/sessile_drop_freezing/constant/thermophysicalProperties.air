@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  sessile_drop_freezing  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermophysicalProperties.air;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/caseParameters"
+
+thermoType
+{
+    type            heRhoThermo;
+    mixture         pureMixture;
+    transport       const;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+mixture
+{
+    specie
+    {
+        nMoles          1;
+        molWeight       28.9;
+    }
+    equationOfState
+    {
+        rho             $rhoG;
+    }
+    thermodynamics
+    {
+        Cp              $CpG;
+        Hf              0;
+    }
+    transport
+    {
+        mu              $muG;
+        Pr              $PrG;
+    }
+}

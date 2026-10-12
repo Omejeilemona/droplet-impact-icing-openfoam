@@ -1,0 +1,4 @@
+mesh,cells_per_radius,dx_um,slip_length_um,valueFraction,beta_max,t_star_at_max,pasandideh_fard_rel_diff_pct
+N25,25,40,20,0.5,2.741,1.69,1.8
+N35,35,29,20,0.416667,2.719,1.61,1.0
+N50,50,20,20,0.333333,2.696,1.60,0.1

@@ -1,0 +1,78 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  sessile_drop_freezing  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoReactingMultiphaseInterFoam;
+
+startFrom       latestTime;
+startTime       0;
+stopAt          endTime;
+endTime         6;
+
+deltaT          1e-6;
+adjustTimeStep  yes;
+maxDeltaT       7e-6;       // ~0.6 x capillary limit sqrt(rho dx^3 / (2 pi sigma)), dx = 50 um
+maxCo           0.2;
+maxAlphaCo      0.2;
+maxAlphaDdt     0.2;
+maxDi           25;
+
+writeControl    adjustable;
+writeInterval   0.1;
+purgeWrite      0;
+writeFormat     binary;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   6;
+runTimeModifiable yes;
+
+functions
+{
+    phaseVolumes
+    {
+        type            volFieldValue;
+        libs            (fieldFunctionObjects);
+        fields          (alpha.liquid alpha.solid);
+        operation       volIntegrate;
+        regionType      all;
+        writeFields     false;
+        writeControl    adjustableRunTime;
+        writeInterval   0.02;
+    }
+    interfaces
+    {
+        type            surfaces;
+        libs            (sampling);
+        writeControl    adjustableRunTime;
+        writeInterval   0.05;
+        surfaceFormat   raw;
+        fields          (T);
+        interpolationScheme cellPoint;
+        surfaces
+        {
+            outline     // droplet / air boundary
+            {
+                type        isoSurface;
+                isoField    alpha.air;
+                isoValue    0.5;
+                interpolate true;
+            }
+            iceFront    // ice / water boundary
+            {
+                type        isoSurface;
+                isoField    alpha.solid;
+                isoValue    0.5;
+                interpolate true;
+            }
+        }
+    }
+}

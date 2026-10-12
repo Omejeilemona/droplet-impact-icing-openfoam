@@ -1,0 +1,63 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  sessile_drop_freezing  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      phaseProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/caseParameters"
+
+type    massTransferMultiphaseSystem;
+
+phases  (air liquid solid);
+
+air
+{
+    type            pureMovingPhaseModel;
+}
+
+liquid
+{
+    type            pureMovingPhaseModel;
+}
+
+solid
+{
+    type            pureStaticSolidPhaseModel;
+}
+
+surfaceTension
+(
+    (air and liquid)
+    {
+        type            constant;
+        sigma           $sigma;
+    }
+);
+
+// Darcy damping of velocity in the ice (Voller & Prakash 1987)
+interfacePorous
+(
+    (solid and liquid)
+    {
+        type            VollerPrakash;
+        solidPhase      alpha.solid;
+        Cu              1e7;
+    }
+);
+
+// Freezing: liquid -> solid below Tm (C < 0); includes the volume change
+massTransferModel
+(
+    (liquid to solid)
+    {
+        type            Lee;
+        C               $Cfreeze;
+        Tactivate       $Tm;
+    }
+);

@@ -11,7 +11,7 @@ Simulations of water droplets impacting surfaces of controlled wettability, buil
 | Phase | Content | Status |
 |---|---|---|
 | 1 | Isothermal axisymmetric impact (`interFoam`), comparison with spreading correlations, mesh study | Done; β_max not mesh-converged (see 1b) |
-| 1b | Wall-region resolution: wall-graded mesh and imposed slip length | Next |
+| 1b | Wall-region resolution: imposed Navier slip length (done), wall-graded mesh (next) | In progress |
 | 1c | Weber-number sweep (We ≈ 7–170) | Next |
 | 2 | Wettability sweep (θ = 30°–160°), deposition and rebound | Planned |
 | 3 | Dynamic contact-angle boundary condition from molecular-kinetic theory (C++ library) | Planned |
@@ -41,7 +41,7 @@ For comparison, the correlations of Clanet et al. (2004) and Roisman (2009) give
   1. numerical contact-line slip, since on a no-slip wall the contact line moves by about one cell;
   2. an under-resolved wall boundary layer, δ ≈ D₀/√Re ≈ 45 µm, covered by only one or two cells.
 
-  Phase 1b is designed to separate them.
+  Phase 1b tests them (below).
 - Liquid volume is conserved to better than 0.001 % through maximum spread.
 - During recoil at θ = 90°, the collapsing cavity drives a thin axial jet rising at about 4 m/s (4 U₀). Its radius is close to the cell size, so its speed is not resolved, and volume loss starts when it forms (−0.085 % by 10 ms). Validation runs therefore stop at t* = 3.
 - β_max is independent of domain height (identical in 4 mm and 8 mm domains).
@@ -53,6 +53,22 @@ The full impact, including recoil, from an earlier exploratory run to t* = 5 (N2
 ![Full impact, spreading and recoil to t* = 5 (N25)](figures/beta_t_N25_full.png)
 
 Data: [`results/mesh_study.csv`](results/mesh_study.csv)
+
+### Phase 1b: imposed slip length
+
+The mesh study was repeated with a Navier slip length λ = 20 µm, u_wall = λ ∂u/∂n, applied as `partialSlip` with valueFraction = (Δy/2)/(λ + Δy/2) on each mesh. If the drift came from numerical contact-line slip, a fixed physical slip length should have removed it.
+
+| Mesh | β_max, no-slip | β_max, λ = 20 µm | Shift |
+|---|---|---|---|
+| N25 | 2.661 | 2.741 | +3.0 % |
+| N35 | 2.640 | 2.719 | +3.0 % |
+| N50 | 2.608 | 2.696 | +3.4 % |
+
+![Spreading factor with an imposed slip length on three meshes](figures/beta_t_mesh_slip20um.png)
+
+Slip raises β_max by about 3 % on every mesh, as expected from the lower wall dissipation, but β_max still falls by about 0.8 % per refinement (steps of −0.022 and −0.023, against −0.021 and −0.032 without slip). Fixing the slip length removed the growth of the steps but not the drift. Numerical contact-line slip is therefore not the main cause; the remaining drift points to under-resolution of the wall boundary layer and the thinning lamella. Recoil converges (the curves meet at t* ≈ 2.9). The near-exact agreement with Pasandideh-Fard at N50 (+0.1 %) should not be over-read, since the model itself is accurate to about ±10 %. The next test is a mesh refined only near the wall.
+
+Data: [`results/mesh_study_slip20um.csv`](results/mesh_study_slip20um.csv)
 
 ## Freezing verification (Phase 4a)
 

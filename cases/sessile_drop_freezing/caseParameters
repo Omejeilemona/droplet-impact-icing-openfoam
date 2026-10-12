@@ -1,0 +1,32 @@
+// ---- Sessile water droplet freezing on a cold plate (axisymmetric) ----
+// Three phases: air (moving), water (moving), ice (static). SI units.
+
+R           1e-3;       // droplet radius [m]; initial shape is a hemisphere (90 deg)
+Tm          273.15;     // melting temperature [K]; droplet and air start at Tm
+Twall       253.15;     // plate temperature [K] (-20 C)
+
+Cfreeze     -1000;      // Lee coefficient (liquid to solid), see stefan_freezing_1d
+
+// water
+rhoL        1000;
+CpL         4180;
+muL         1.79e-3;    // at 0 C
+PrL         12.5;       // mu Cp / k, k = 0.6
+Lf          3.34e5;     // latent heat [J/kg], entered as Hf of the water
+
+// ice: lower density, so freezing expands the droplet by about 9 %
+rhoS        917;
+CpS         2050;
+kS          2.22;
+
+// air
+rhoG        1.29;
+CpG         1005;
+muG         1.72e-5;
+PrG         0.71;
+
+sigma       0.0756;     // water-air at 0 C
+
+// Domain 3 mm x 3 mm (Lmm), nCells per side -> dx = 50 um (20 cells per radius)
+Lmm         3;
+nCells      60;

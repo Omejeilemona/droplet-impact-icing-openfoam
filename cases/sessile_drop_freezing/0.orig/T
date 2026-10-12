@@ -1,0 +1,43 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  sessile_drop_freezing  |  OpenFOAM v2606 (openfoam.com)
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/caseParameters"
+
+dimensions      [0 0 0 1 0 0 0];
+internalField   uniform $Tm;
+
+boundaryField
+{
+    plate
+    {
+        type            fixedValue;
+        value           uniform $Twall;
+    }
+    atmosphere
+    {
+        type            inletOutlet;
+        inletValue      uniform $Tm;
+        value           uniform $Tm;
+    }
+    front
+    {
+        type            wedge;
+    }
+    back
+    {
+        type            wedge;
+    }
+    axis
+    {
+        type            empty;
+    }
+}
