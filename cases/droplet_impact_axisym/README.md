@@ -36,6 +36,7 @@ Default U0 = 1 m/s gives We = ρU0²D0/σ = 27.8, Re = U0D0/ν = 2000.
 - `log.spreading`: β_max compared with Clanet et al. (2004), Pasandideh-Fard et al. (1996), Roisman (2009)
 - `postProcessing/liquidVolume`: liquid volume history (mass conservation check)
 - `case.foam`: open in ParaView, colour by `alpha.water`
+- `python3 postProcess/animate.py .` writes `impact.gif`, an animation of the interface
 
 ## Results (We = 27.8, Re = 2000, θ = 90°)
 

@@ -2,11 +2,15 @@
 
 Simulations of water droplets impacting surfaces of controlled wettability, built step by step towards droplet freezing on cold surfaces, the process behind aircraft and wind-turbine icing. The work uses OpenFOAM (v2606, openfoam.com) with volume-of-fluid interface capturing, and is aimed at the question of how the wall, through its wettability, its contact-line dynamics and later its temperature, controls spreading and freezing.
 
+![Droplet impact: spreading, recoil and axial jet (N25, We = 28, θ = 90°)](figures/impact.gif)
+
+*Interface (α = 0.5) of a 2 mm water droplet hitting a wall at 1 m/s, mirrored about the axis. Generated with `postProcess/animate.py`.*
+
 ## Status
 
 | Phase | Content | Status |
 |---|---|---|
-| 1 | Isothermal axisymmetric impact (`interFoam`), comparison with spreading correlations, mesh study | Done |
+| 1 | Isothermal axisymmetric impact (`interFoam`), comparison with spreading correlations, mesh study | Done; β_max not mesh-converged (see 1b) |
 | 1b | Wall-region resolution: wall-graded mesh and imposed slip length | Next |
 | 1c | Weber-number sweep (We ≈ 7–170) | Next |
 | 2 | Wettability sweep (θ = 30°–160°), deposition and rebound | Planned |
@@ -40,6 +44,8 @@ For comparison, the correlations of Clanet et al. (2004) and Roisman (2009) give
 - During recoil at θ = 90°, the collapsing cavity drives a thin axial jet rising at about 4 m/s (4 U₀). Its radius is close to the cell size, so its speed is not resolved, and volume loss starts when it forms (−0.085 % by 10 ms). Validation runs therefore stop at t* = 3.
 - β_max is independent of domain height (identical in 4 mm and 8 mm domains).
 
+The full impact, including recoil, from an earlier exploratory run to t* = 5 (N25, 4 mm tall domain, otherwise identical):
+
 ![Full impact, spreading and recoil to t* = 5 (N25)](figures/beta_t_N25_full.png)
 
 Data: [`results/mesh_study.csv`](results/mesh_study.csv)
@@ -64,17 +70,18 @@ cd cases/droplet_impact_axisym
 ./Allrun            # mesh, setFields, interFoam on 4 cores, spreading analysis
 NP=1 ./Allrun       # serial
 ./Allclean          # reset the case
-./runMeshStudy      # N = 25, 35, 50 -> ../meshStudy/beta_t_mesh.png
-./runSweep          # Weber-number sweep -> ../sweep/betamax_We.png
+./runMeshStudy      # N = 25, 35, 50 -> cases/meshStudy/beta_t_mesh.png
+./runSweep          # Weber-number sweep -> cases/sweep/betamax_We.png
 ```
 
-All physical, mesh and run-length inputs are in `caseParameters`. `Allrun` sets the end time and the time-step limit from them.
+All physical, mesh and run-length inputs are in `caseParameters`. `Allrun` sets the end time and the time-step limit from them. Study and sweep runs are written to `cases/meshStudy/` and `cases/sweep/`, which git does not track; selected figures and tables are copied to `figures/` and `results/`.
 
 ## Repository layout
 
 ```
 cases/droplet_impact_axisym/   OpenFOAM case (0.orig, constant, system), run scripts
 cases/.../postProcess/         spreading.py: beta(t), correlations, sweep and mesh plots
+                               animate.py: GIF of the interface
 figures/                       figures used in this README
 results/                       tabulated results
 ```
