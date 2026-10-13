@@ -1,6 +1,8 @@
 # sessile_drop_freezing
 
-A water droplet (R = 1 mm, initially a 90° hemisphere at 0 °C) freezes on a plate held at −20 °C, in air at 0 °C. Axisymmetric wedge, `icoReactingMultiphaseInterFoam` with three phases: air and water (moving) and ice (static).
+**Status: in progress.** The case does not yet conserve ice mass and its contact line spreads as soon as ice forms; see the Phase 4b diagnosis in the top-level README. Treat results from it as diagnostic only.
+
+A water droplet (R = 1 mm, initially a 90° hemisphere at 0 °C) freezes on a plate held at −30 °C, in air at 0 °C. Axisymmetric wedge, `icoReactingMultiphaseInterFoam` with three phases: air and water (moving) and ice (static).
 
 | Item | Setting |
 |---|---|
@@ -8,8 +10,10 @@ A water droplet (R = 1 mm, initially a 90° hemisphere at 0 °C) freezes on a pl
 | Ice | ρ = 917 kg/m³, so freezing expands the droplet by about 9 %; Voller-Prakash damping keeps ice static |
 | Surface tension | water-air, σ = 0.0756 N/m |
 | Contact angle | 90° (zero-gradient volume fractions at the plate) |
-| Mesh | 60 × 60 cells over 3 × 3 mm (Δx = 50 µm, 20 cells per radius) |
-| Time step | ≤ 7 µs, set by the capillary limit √(ρΔx³/2πσ) |
+| Mesh | 42 × 42 cells over 3 × 3 mm (Δx = 71 µm, 14 cells per radius) |
+| Time step | ≤ 11.5 µs, set by the capillary limit √(ρΔx³/2πσ) |
+
+The mesh is coarse because explicit surface tension limits the time step while freezing takes seconds: about 350,000 steps even at this resolution. Finer meshes are a job for an HPC cluster.
 
 ## Run
 

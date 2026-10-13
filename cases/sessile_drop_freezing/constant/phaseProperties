@@ -38,12 +38,29 @@ surfaceTension
         type            constant;
         sigma           $sigma;
     }
+    // ice is rigid: no capillary force on its interfaces
+    (air and solid)
+    {
+        type            constant;
+        sigma           0;
+    }
+    (liquid and solid)
+    {
+        type            constant;
+        sigma           0;
+    }
 );
 
 // Darcy damping of velocity in the ice (Voller & Prakash 1987)
 interfacePorous
 (
     (solid and liquid)
+    {
+        type            VollerPrakash;
+        solidPhase      alpha.solid;
+        Cu              1e7;
+    }
+    (solid and air)          // keep air out of the ice as well
     {
         type            VollerPrakash;
         solidPhase      alpha.solid;

@@ -2,9 +2,9 @@
 
 Simulations of water droplets impacting surfaces of controlled wettability, built step by step towards droplet freezing on cold surfaces, the process behind aircraft and wind-turbine icing. The work uses OpenFOAM (v2606, openfoam.com) with volume-of-fluid interface capturing, and is aimed at the question of how the wall, through its wettability, its contact-line dynamics and later its temperature, controls spreading and freezing.
 
-![Droplet impact: spreading, recoil and axial jet (N25, We = 28, θ = 90°)](figures/impact.gif)
+<p align="center"><img src="figures/impact_paraview.gif" width="360" alt="Droplet impact: spreading, recoil, cavity collapse and axial jet"></p>
 
-*Interface (α = 0.5) of a 2 mm water droplet hitting a wall at 1 m/s, mirrored about the axis. Generated with `postProcess/animate.py`.*
+*Water volume fraction for a 2 mm water droplet hitting a wall at 1 m/s (We = 28, Re = 2000, θ = 90°), axisymmetric `interFoam` run mirrored about the axis (ParaView). The droplet spreads into a lamella with an air bubble trapped at the centre, recoils, opens a dry spot on the axis whose collapse drives a thin jet, and the jet breaks into satellite droplets.*
 
 ## Status
 
@@ -12,11 +12,11 @@ Simulations of water droplets impacting surfaces of controlled wettability, buil
 |---|---|---|
 | 1 | Isothermal axisymmetric impact (`interFoam`), comparison with spreading correlations, mesh study | Done; β_max not mesh-converged (see 1b) |
 | 1b | Wall-region resolution: imposed Navier slip length (done), wall-graded mesh (next) | In progress |
-| 1c | Weber-number sweep (We ≈ 7–170) | Next |
-| 2 | Wettability sweep (θ = 30°–160°), deposition and rebound | Planned |
+| 1c | Weber-number sweep (We = 7–174) | Done; resolution-limited above We ≈ 60 |
+| 2 | Wettability sweep at We = 28 (θ = 30°–150°) | Done; rebound regime planned |
 | 3 | Dynamic contact-angle boundary condition from molecular-kinetic theory (C++ library) | Planned |
 | 4a | Freezing verification: 1D Stefan problem with `icoReactingMultiphaseInterFoam` | Done |
-| 4b | Sessile droplet freezing on a cold plate (water, ice, air; ice expansion) | In progress |
+| 4b | Sessile droplet freezing on a cold plate (water, ice, air; ice expansion) | Paused: diagnosis below |
 | 4c | Droplet impact on a cold plate | Planned |
 | 5 | 3D impact with adaptive mesh refinement, parallel scaling | Planned |
 
@@ -47,6 +47,11 @@ For comparison, the correlations of Clanet et al. (2004) and Roisman (2009) give
 - β_max is independent of domain height (identical in 4 mm and 8 mm domains).
 - The animation shows a small air bubble trapped on the axis at the wall from the moment of impact, consistent with the air cushion being enclosed under the droplet (Thoroddsen et al. 2005). At N25 it spans only a few cells, so its size is not resolved.
 - The axial jet breaks into satellite droplets (three by t ≈ 9 ms). The jet and these droplets are a few cells across, which is where the late volume loss occurs.
+- The jet forms after the recoiling film opens a dry spot on the axis (t ≈ 6 ms) and the cavity collapses, the mechanism described by Bartolo et al. (2006).
+
+![Interface animation generated from the isosurface data](figures/impact.gif)
+
+*The same impact drawn from the α = 0.5 isosurface data with `postProcess/animate.py`, without ParaView.*
 
 The full impact, including recoil, from an earlier exploratory run to t* = 5 (N25, 4 mm tall domain, otherwise identical):
 
@@ -70,6 +75,42 @@ Slip raises β_max by about 3 % on every mesh, as expected from the lower wall d
 
 Data: [`results/mesh_study_slip20um.csv`](results/mesh_study_slip20um.csv)
 
+## Weber-number sweep (Phase 1c)
+
+U₀ = 0.5–2.5 m/s at θ = 90° and N25 (40 µm cells), run to t* = 5 so that every maximum is captured.
+
+| We | Re | β_max | Pasandideh-Fard | Roisman | Clanet | vs Pasandideh-Fard |
+|---|---|---|---|---|---|---|
+| 6.9 | 1000 | 1.87 | 2.21 | 1.06 | 1.46 | −15.3 % |
+| 27.8 | 2000 | 2.66 | 2.69 | 2.39 | 2.07 | −1.2 % |
+| 62.5 | 3000 | 3.33 | 3.14 | 3.07 | 2.53 | +6.1 % |
+| 111.1 | 4000 | 4.04 | 3.50 | 3.52 | 2.92 | +15.3 % |
+| 173.6 | 5000 | 4.61 | 3.81 | 3.86 | 3.27 | +21.2 % |
+
+![Maximum spreading against Weber number](figures/betamax_We.png)
+
+β_max rises with We as in all three correlations, with a fitted exponent of 0.26 between We = 7 and 62 (Clanet's capillary scaling gives 1/4). At low We the energy-balance and viscous correlations are outside their range of validity. Above We ≈ 60 the simulation overpredicts by 15–21 % and the maximum is reached late (t* = 4.6 at We = 111, where experiments usually give t* ≈ 2–3). At these Reynolds numbers the boundary layer (δ ≈ D₀/√Re = 28–32 µm) is thinner than one 40 µm cell and the lamella near maximum spread is about two cells thick, so wall friction is underestimated and the film keeps creeping. This is the same wall-resolution effect identified in Phase 1b, at its strongest. High-We runs need a wall-refined mesh before they can be compared quantitatively.
+
+Data: [`results/weber_sweep.csv`](results/weber_sweep.csv)
+
+## Wettability sweep (Phase 2)
+
+θ = 30°–150° at We = 28, N25.
+
+| θ | β_max | t* at β_max | Pasandideh-Fard | Difference |
+|---|---|---|---|---|
+| 30° | 3.94 | 3.33 | 3.71 | +6.1 % |
+| 60° | 3.30 | 2.15 | 3.16 | +4.3 % |
+| 90° | 2.66 | 1.70 | 2.69 | −1.2 % |
+| 120° | 2.22 | 1.29 | 2.39 | −7.0 % |
+| 150° | 2.07 | 1.26 | 2.22 | −6.8 % |
+
+![Spreading factor for five contact angles](figures/beta_t_theta.png)
+
+Pasandideh-Fard's energy balance, the only correlation with a contact-angle term, stays within ±7 % from strongly wetting to strongly non-wetting walls. At 150° the result matches Clanet's correlation (2.07 against 2.066), consistent with that scaling having been derived on superhydrophobic surfaces. Wettability also sets the recoil: at θ ≥ 120° the droplet retracts to β ≈ 1.1–1.2 by t* = 3, heading towards rebound, while at 30° it keeps spreading until t* ≈ 3.3 and retracts only slightly.
+
+Data: [`results/theta_sweep.csv`](results/theta_sweep.csv)
+
 ## Freezing verification (Phase 4a)
 
 Water at 0 °C in a 10 mm column is frozen from a wall held at −10 °C (`cases/stefan_freezing_1d`). The solver is `icoReactingMultiphaseInterFoam` with water and ice as phases, the Lee phase-change model (liquid to solid, active below 0 °C) and Voller-Prakash damping in the ice. Ice and water densities are set equal so that freezing causes no flow, as the analytical solution assumes. The exact front position is s(t) = 2λ√(α_ice t), with λ e^{λ²} erf(λ) = St/√π; here St = 0.061 and s = 0.361 mm √(t/s).
@@ -85,6 +126,24 @@ Water at 0 °C in a 10 mm column is frozen from a wall held at −10 °C (`cases
 The Lee model freezes water at a rate proportional to its undercooling, so the front runs slightly behind the exact solution. The lag is fixed early (the curves are parallel in √t), so the relative error decays over time. It falls with |C|, but by less than a factor of 10 per decade, which suggests a second error source (the 50 µm cells, 1.4 % of the final thickness) dominates at C = −10000. C = −1000 is used for the droplet cases as a compromise between accuracy and time step.
 
 Data: [`results/stefan_C.csv`](results/stefan_C.csv)
+
+## Sessile droplet freezing (Phase 4b): diagnosis
+
+A water droplet (R = 1 mm, 90° hemisphere at 0 °C) on a plate at −30 °C, with air, water and ice as three phases in `icoReactingMultiphaseInterFoam` (`cases/sessile_drop_freezing`, 14 cells per radius, limited by the explicit surface-tension time step). The case is not yet physical, and the tests below isolate why.
+
+| Test | Result |
+|---|---|
+| No freezing (plate at 0 °C), 0.1 s | Hemisphere holds (apex 0.97 R), mass conserved: the three-phase setup and surface tension are sound |
+| Freezing, first 0.1 s | Contact line advances from 1.0 to 1.33 mm as soon as ice forms (2 % frozen at 0.01 s); a real droplet pins its contact line |
+| Full run | Freezes in about 1 s into a flat cap (apex 0.35 R); ice mass keeps falling after the drop is fully frozen (−11 % at 1.2 s, −39 % at 3.7 s) |
+| + Darcy damping on the ice-air pair | Loss halved (−5 % at 1.2 s, −28 % at 4 s) but continues after full freezing |
+| + equal ice and water densities | Same spreading and loss, so neither is caused by the 9 % expansion |
+
+![Frozen fraction, apex height and outlines with ice-air damping](figures/freezing_airDamp.png)
+
+The leak is numerical and tied to the static ice phase where it meets air; the spreading appears as soon as ice forms at the contact line. The next step is to keep water and ice in one volume-of-fluid phase (`interFoam` with an energy equation and enthalpy-porosity freezing restricted to the liquid), so that freezing cannot change the phase volume and mass is conserved by construction. Phase 4a remains the validated freezing result.
+
+Data: [`results/freezing_mass.csv`](results/freezing_mass.csv)
 
 ## Model
 
@@ -108,6 +167,10 @@ NP=1 ./Allrun       # serial
 ./Allclean          # reset the case
 ./runMeshStudy      # N = 25, 35, 50 -> cases/meshStudy/beta_t_mesh.png
 ./runSweep          # Weber-number sweep -> cases/sweep/betamax_We.png
+./runThetaSweep     # contact angle 30-150 deg -> cases/thetaSweep/beta_t_theta.png
+SLIP=20e-6 OUT=../meshStudy_slip20um ./runMeshStudy   # mesh study with Navier slip
+
+cd ../stefan_freezing_1d && ./Allrun && ./runCStudy    # freezing verification
 ```
 
 All physical, mesh and run-length inputs are in `caseParameters`. `Allrun` sets the end time and the time-step limit from them. Study and sweep runs are written to `cases/meshStudy/` and `cases/sweep/`, which git does not track; selected figures and tables are copied to `figures/` and `results/`.
@@ -117,6 +180,7 @@ All physical, mesh and run-length inputs are in `caseParameters`. `Allrun` sets 
 ```
 cases/droplet_impact_axisym/   OpenFOAM case (0.orig, constant, system), run scripts
 cases/stefan_freezing_1d/      freezing verification against the Stefan problem
+cases/sessile_drop_freezing/   three-phase droplet freezing (in progress, see Phase 4b)
 cases/.../postProcess/         spreading.py: beta(t), correlations, sweep and mesh plots
                                animate.py: GIF of the interface
 figures/                       figures used in this README

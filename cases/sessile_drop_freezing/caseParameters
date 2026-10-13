@@ -3,7 +3,7 @@
 
 R           1e-3;       // droplet radius [m]; initial shape is a hemisphere (90 deg)
 Tm          273.15;     // melting temperature [K]; droplet and air start at Tm
-Twall       253.15;     // plate temperature [K] (-20 C)
+Twall       243.15;     // plate temperature [K] (-30 C)
 
 Cfreeze     -1000;      // Lee coefficient (liquid to solid), see stefan_freezing_1d
 
@@ -27,6 +27,6 @@ PrG         0.71;
 
 sigma       0.0756;     // water-air at 0 C
 
-// Domain 3 mm x 3 mm (Lmm), nCells per side -> dx = 50 um (20 cells per radius)
+// Domain 3 mm x 3 mm (Lmm), nCells per side
 Lmm         3;
-nCells      60;
+nCells      42;         // dx = 71 um (14 cells per radius)

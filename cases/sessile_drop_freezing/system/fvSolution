@@ -23,7 +23,7 @@ solvers
     "alpha.*"
     {
         nAlphaCorr      1;
-        nAlphaSubCycles 2;
+        nAlphaSubCycles 1;
         cAlphas         ((air and liquid) 1 (liquid and solid) 0 (air and solid) 0);
 
         solver          smoothSolver;
@@ -84,7 +84,7 @@ PIMPLE
 {
     momentumPredictor   no;
     nOuterCorrectors    1;
-    nCorrectors         3;
+    nCorrectors         2;
     nNonOrthogonalCorrectors 0;
 }
 

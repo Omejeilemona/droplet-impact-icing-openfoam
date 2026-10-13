@@ -1,0 +1,13 @@
+case,t_s,frozen_fraction,mass_change_pct
+ice_water_damping_only,0.10,0.305,-0.10
+ice_water_damping_only,0.90,0.992,-5.68
+ice_water_damping_only,1.20,1.000,-11.02
+ice_water_damping_only,3.72,1.000,-38.93
+plus_ice_air_damping,0.10,0.290,-0.09
+plus_ice_air_damping,0.90,0.971,-2.69
+plus_ice_air_damping,1.20,0.998,-5.24
+plus_ice_air_damping,4.00,1.000,-27.57
+plus_ice_air_damping_equal_density,0.10,0.292,-0.00
+plus_ice_air_damping_equal_density,0.90,0.981,-2.74
+plus_ice_air_damping_equal_density,1.20,0.999,-6.01
+plus_ice_air_damping_equal_density,4.00,1.000,-29.55

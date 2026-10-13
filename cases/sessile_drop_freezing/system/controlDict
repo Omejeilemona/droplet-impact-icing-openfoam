@@ -15,11 +15,11 @@ application     icoReactingMultiphaseInterFoam;
 startFrom       latestTime;
 startTime       0;
 stopAt          endTime;
-endTime         6;
+endTime         4;
 
 deltaT          1e-6;
 adjustTimeStep  yes;
-maxDeltaT       7e-6;       // ~0.6 x capillary limit sqrt(rho dx^3 / (2 pi sigma)), dx = 50 um
+maxDeltaT       1.15e-5;    // 0.6 x capillary limit at dx = 71 um
 maxCo           0.2;
 maxAlphaCo      0.2;
 maxAlphaDdt     0.2;
