@@ -2,9 +2,14 @@
 
 Simulations of water droplets impacting surfaces of controlled wettability, built step by step towards droplet freezing on cold surfaces, the process behind aircraft and wind-turbine icing. The work uses OpenFOAM (v2606, openfoam.com) with volume-of-fluid interface capturing, and is aimed at the question of how the wall, through its wettability, its contact-line dynamics and later its temperature, controls spreading and freezing.
 
-<p align="center"><img src="figures/impact_paraview.gif" width="360" alt="Droplet impact: spreading, recoil, cavity collapse and axial jet"></p>
+<table align="center">
+<tr>
+<td align="center"><img src="figures/impact_paraview.gif" width="300" alt="Water volume fraction (ParaView)"><br><sub>Water volume fraction (ParaView)</sub></td>
+<td align="center"><img src="figures/impact.gif" width="300" alt="Interface from isosurface data"><br><sub>α = 0.5 interface (<code>postProcess/animate.py</code>)</sub></td>
+</tr>
+</table>
 
-*Water volume fraction for a 2 mm water droplet hitting a wall at 1 m/s (We = 28, Re = 2000, θ = 90°), axisymmetric `interFoam` run mirrored about the axis (ParaView). The droplet spreads into a lamella with an air bubble trapped at the centre, recoils, opens a dry spot on the axis whose collapse drives a thin jet, and the jet breaks into satellite droplets.*
+*Water volume fraction for a 2 mm water droplet hitting a wall at 1 m/s (We = 28, Re = 2000, θ = 90°), axisymmetric `interFoam` run mirrored about the axis; left from ParaView, right drawn from the interface data without ParaView. The droplet spreads into a lamella with an air bubble trapped at the centre, recoils, opens a dry spot on the axis whose collapse drives a thin jet, and the jet breaks into satellite droplets.*
 
 ## Status
 
@@ -48,10 +53,6 @@ For comparison, the correlations of Clanet et al. (2004) and Roisman (2009) give
 - The animation shows a small air bubble trapped on the axis at the wall from the moment of impact, consistent with the air cushion being enclosed under the droplet (Thoroddsen et al. 2005). At N25 it spans only a few cells, so its size is not resolved.
 - The axial jet breaks into satellite droplets (three by t ≈ 9 ms). The jet and these droplets are a few cells across, which is where the late volume loss occurs.
 - The jet forms after the recoiling film opens a dry spot on the axis (t ≈ 6 ms) and the cavity collapses, the mechanism described by Bartolo et al. (2006).
-
-![Interface animation generated from the isosurface data](figures/impact.gif)
-
-*The same impact drawn from the α = 0.5 isosurface data with `postProcess/animate.py`, without ParaView.*
 
 The full impact, including recoil, from an earlier exploratory run to t* = 5 (N25, 4 mm tall domain, otherwise identical):
 
